@@ -1,0 +1,135 @@
+import java.util.*;
+import java.io.*;
+
+import static java.lang.Long.parseLong;
+import static java.lang.Integer.parseInt;
+
+
+class Test
+{
+	
+	static class Point
+	{
+		int x,y;
+		Point(int x,int y)
+		{
+			this.x=x;
+			this.y=y;
+		}
+	}
+	
+	static ArrayList<Point> convexHull(Point[] p)
+	{
+		Point start=p[0];
+		int r=0;
+		for(int i=1;i<p.length;i++)
+		{
+			if(p[i].x<start.x)
+				start=p[i];
+		}
+		Point current=start;
+		HashSet<Point> result=new HashSet<>();
+		result.add(start);
+		ArrayList<Point> collinear=new ArrayList<>();
+		while(true)
+		{
+			Point nextTarget=p[0];
+			r++;
+			for(int i=1;i<p.length;i++)
+			{
+				if(current==p[i])
+					continue;
+			
+			
+			int val=crossProduct(current,nextTarget,p[i]);
+			
+			  if(val>0)
+			  {
+				  nextTarget=p[i];
+				  collinear=new ArrayList<>();
+			  }else if(val==0)
+			  {
+				  if(distance(current,nextTarget,p[i])<0)
+				  {
+					 collinear.add(nextTarget);
+					 nextTarget=p[i];
+				  }else
+				  {
+					  collinear.add(p[i]);
+				  }
+			  }
+			}
+			for(Point temp:collinear)
+				result.add(temp);
+			if(nextTarget==start)
+				break;
+			result.add(nextTarget);
+			current=nextTarget;
+			if(r==10)break;
+		}
+		return new ArrayList<>(result);
+	}
+	
+static	int crossProduct(Point a,Point b,Point c)
+	{
+		int y1=a.y-b.y;
+		int y2=a.y-c.y;
+		int x1=a.x-b.x;
+		int x2=a.x-c.x;
+		return y2*x1 - x2*y1;
+	}
+	
+static int distance(Point a,Point b,Point c)
+	{
+		int y1=a.y-b.y;
+		int y2=a.y-c.y;
+		int x1=a.x-b.x;
+		int x2=a.x-c.x;
+		return Integer.compare(y1*y1+x1*x1, y2*y2+x2*x2);
+	}
+	public static void main(String aa[])throws Exception
+	{
+		Scan s=new Scan();
+		Point p[]=new Point[7];
+		p[0]=new Point(0, 3);
+        p[1]=new Point(2, 3);
+        p[2]=new Point(1, 1);
+        p[3]=new Point(2, 1);
+        p[4]=new Point(3, 0);
+        p[5]=new Point(0, 0);
+        p[6]=new Point(3, 3);
+        ArrayList<Point> a1=convexHull(p);
+       for(Point temp:a1)
+    	   System.out.println(temp.x+" "+temp.y);
+        System.out.println("hello");
+		
+	}
+	
+}
+
+	
+
+class Scan
+{
+   // BufferedReader br;
+    StringTokenizer st;
+   BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+    String scanString() throws IOException
+    {
+        while(st==null||!st.hasMoreTokens())
+        {
+            st=new StringTokenizer(br.readLine());
+        }
+        return st.nextToken();
+    }
+    int scanInt() throws IOException
+    {
+        return parseInt(scanString());
+    }
+    long scanLong() throws IOException
+    {
+        return parseLong(scanString());
+    }
+    
+}
+
